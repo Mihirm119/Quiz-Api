@@ -6,7 +6,7 @@ exports.CREATE = async function (req, res, next) {
 
     try {
 
-        const { title, description, questions } = req.body;
+        const { title, description, questions , category } = req.body;
         const find = await QUIZ.findOne({ title, description });
 
         if (find) throw new Error("Quiz Is Already Exict");
@@ -19,12 +19,10 @@ exports.CREATE = async function (req, res, next) {
         let quiz = await QUIZ.create({
             title,
             description,
+            category,
             questions: formattedQuestions,
         })
 
-        let newcategory = await QuizCategory.create({
-            name: title,
-        })
 
         res.status(201).json({
             status: "SUCCESS",
@@ -91,7 +89,7 @@ exports.READ = async function (req, res, next) {
 
     try {
 
-        let READDATA = await QUIZ.find()
+        let READDATA = await QUIZ.find().populate('category')
 
         res.status(201).json({
             status: "SUCCESS",
